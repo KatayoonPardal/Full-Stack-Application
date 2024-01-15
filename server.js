@@ -6,17 +6,27 @@ const app = express();
 const port = process.env.PORT || 3001;
 app.use(bodyParser.json());
 app.use(cors());
+
 app.post('/submitForm', (req, res) => {
-try {const formData = req.body;
+  try {
+    const formData = req.body;
+    
+    // Extract additional form fields
+    const { name, email, address, phoneNumber } = formData;
+
+    // Create CSV data with additional fields
+    const csvData = `${name},${email},${address},${phoneNumber}\n`;
+
     // Write form data to CSV file
-    const csvData = `${formData.name},${formData.email}\n`;
     fs.appendFileSync('formData.csv', csvData);
+
     res.json({ success: true, message: 'Form submitted successfully' });
-    } catch (error) {
+  } catch (error) {
     console.error('Error processing form:', error);
     res.status(500).json({ success: false, message: 'Error processing the form' });
-    }
-    });
-    app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
-    });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
